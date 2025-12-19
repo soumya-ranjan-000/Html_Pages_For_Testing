@@ -4,12 +4,153 @@
     <meta charset="UTF-8">
     <title>Self-Healing Test Page</title>
     <style>
-        body { font-family: sans-serif; padding: 50px; }
-        .container { border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
+        :root {
+            --container-gap: 16px;
+            --link-color: #0456d6;
+            --link-hover: #083ea8;
+            --bg-accent: #0b3d91;
+        }
+        html, body { height: 100%; }
+        body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; padding: 50px; background-color: #fbfbfd; }
+        .container {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: var(--container-gap);
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 8px 24px rgba(12, 24, 40, 0.08);
+            backdrop-filter: blur(10px) saturate(120%);
+            -webkit-backdrop-filter: blur(10px) saturate(120%);
+        }
+        .container:last-of-type { margin-bottom: 0; }
+
+        @media (min-width: 600px) {
+            :root { --container-gap: 28px; }
+        }
+
+        @media (min-width: 1024px) {
+            :root { --container-gap: 44px; }
+        }
         button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; }
+
+        /* Links in the links container: plain text style with animated underline */
+        #links-list ul { list-style: none; padding-left: 0; margin: 0; }
+        #links-list li { margin: 8px 0; }
+        #links-list a {
+            text-decoration: none;
+            color: var(--link-color);
+            font-weight: 500;
+            display: inline-block;
+            position: relative;
+            padding-bottom: 2px;
+            transition: color 180ms ease, transform 120ms ease;
+        }
+        #links-list a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 2px;
+            width: 100%;
+            background: linear-gradient(90deg, var(--link-color), var(--link-hover));
+            transform: scaleX(0);
+            transform-origin: left center;
+            transition: transform 220ms cubic-bezier(.2,.9,.2,1);
+            border-radius: 2px;
+            opacity: 0.95;
+        }
+        #links-list a:hover {
+            color: var(--link-hover);
+            transform: translateX(3px);
+        }
+        #links-list a:hover::after { transform: scaleX(1); }
+
+        /* Page SVG background */
+        #page-bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.76; }
+        @media (prefers-reduced-motion: reduce) {
+            #page-bg { transition: none; }
+        }
     </style>
 </head>
 <body>
+    <svg id="page-bg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+            <linearGradient id="g1" x1="0" x2="1">
+                <stop offset="0%" stop-color="#a6c8ff" stop-opacity="0.95"/>
+                <stop offset="50%" stop-color="#7aa0ff" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#9be7ff" stop-opacity="0.85"/>
+            </linearGradient>
+            <linearGradient id="g2" x1="0" x2="1">
+                <stop offset="0%" stop-color="#ffd76b"/>
+                <stop offset="100%" stop-color="#ff6b6b"/>
+            </linearGradient>
+            <radialGradient id="g3" cx="30%" cy="20%">
+                <stop offset="0%" stop-color="#b6f0d0" stop-opacity="0.95"/>
+                <stop offset="100%" stop-color="#6bd8ff" stop-opacity="0.6"/>
+            </radialGradient>
+        </defs>
+
+        <!-- subtle gradient wash as base -->
+        <rect width="100%" height="100%" fill="url(#g1)" opacity="0.16" />
+
+        <!-- colored geometric accents -->
+        <g stroke="url(#g2)" stroke-opacity="0.18" fill="none">
+            <circle cx="140" cy="120" r="110" />
+            <rect x="860" y="520" width="260" height="160" rx="20" />
+            <line x1="40" y1="720" x2="1160" y2="720" stroke-opacity="0.06" />
+        </g>
+
+        <g stroke="#8b6bff" stroke-opacity="0.14" fill="none">
+            <polygon points="320,600 420,460 520,600" />
+            <path d="M700 80 C740 120, 820 120, 860 80" stroke-width="2" />
+        </g>
+
+        <!-- lots of colorful math symbols and formulas, low opacity -->
+        <g font-family="Georgia, 'Times New Roman', serif" fill-opacity="0.92">
+            <text x="220" y="200" font-size="64" fill="#ff6b6b">E=mc²</text>
+            <text x="70" y="340" font-size="20" fill="#ffd76b">Σ n=1∞ 1/n² = π²/6</text>
+            <text x="920" y="140" font-size="84" font-weight="700" fill="#6bd8ff">π</text>
+            <text x="640" y="360" font-size="36" fill="#8b6bff">∇·E = ρ/ε₀</text>
+            <text x="480" y="80" font-size="28" fill="#ff9db6">∫₀^∞ e^{-x} dx = 1</text>
+            <text x="980" y="240" font-size="42" fill="#82f0c9">ℏ</text>
+            <text x="120" y="520" font-size="34" fill="#ffd76b">α β γ δ</text>
+            <text x="300" y="120" font-size="22" fill="#9be7ff">lim_{n→∞} a_n</text>
+            <text x="560" y="520" font-size="46" fill="#ff6b6b">∑</text>
+            <text x="760" y="620" font-size="28" fill="#8b6bff">√(2πσ²)</text>
+
+            <!-- additional symbols -->
+            <text x="40" y="90" font-size="36" fill="#ffd76b">∂</text>
+            <text x="110" y="240" font-size="26" fill="#ff9db6">∂/∂x</text>
+            <text x="180" y="40" font-size="30" fill="#b6f0d0">∀</text>
+            <text x="260" y="260" font-size="30" fill="#ff6b6b">∃</text>
+            <text x="360" y="300" font-size="40" fill="#6bd8ff">∈</text>
+            <text x="420" y="200" font-size="32" fill="#82f0c9">∉</text>
+            <text x="520" y="100" font-size="28" fill="#8b6bff">≈</text>
+            <text x="600" y="220" font-size="30" fill="#ffd76b">≠</text>
+            <text x="700" y="180" font-size="36" fill="#ff9db6">∝</text>
+            <text x="840" y="260" font-size="44" fill="#9be7ff">i</text>
+            <text x="920" y="300" font-size="26" fill="#b6f0d0">e^{iπ}+1=0</text>
+            <text x="1000" y="80" font-size="34" fill="#ff6b6b">ℵ₀</text>
+            <text x="200" y="680" font-size="28" fill="#82f0c9">ℝ</text>
+            <text x="320" y="520" font-size="24" fill="#8b6bff">∑_{k=0}^n</text>
+            <text x="460" y="720" font-size="30" fill="#ffd76b">ln(2)</text>
+            <text x="640" y="120" font-size="22" fill="#ff9db6">cosθ</text>
+            <text x="740" y="520" font-size="26" fill="#b6f0d0">det(A)</text>
+        </g>
+
+        <!-- colored dots / small accents -->
+        <g fill-opacity="0.98">
+            <circle cx="980" cy="60" r="4" fill="#ff6b6b" />
+            <circle cx="1020" cy="100" r="3" fill="#ffd76b" />
+            <circle cx="900" cy="200" r="3" fill="#6bd8ff" />
+            <circle cx="200" cy="720" r="3" fill="#8b6bff" />
+            <circle cx="450" cy="430" r="2.5" fill="#ff9db6" />
+            <circle cx="620" cy="150" r="3.5" fill="#b6f0d0" />
+        </g>
+    </svg>
     <div class="container">
         <h1>Healenium + GenApi Demo</h1>
         <p>This button will change its ID in <span id="timer">5</span> seconds.</p>
@@ -37,5 +178,19 @@
             }, 1000);
         </script>
     </div>
+    
+    <div class="container" id="links-list">
+        <div class="container" id="links-list">
+        <h2>Demo Websites For Testing</h2>
+        <p>Quick links to helpful resources:</p>
+        <ul>
+            <li><a href="https://html-pages-for-testing.onrender.com/dynamic_page.html" target="_blank" rel="noopener noreferrer">Dynamic Page</a></li>
+            <li><a href="https://ecommerce-playground.lambdatest.io/" target="_blank" rel="noopener noreferrer">Ecommerce Playground</a></li>
+            <li><a href="https://testautomationpractice.blogspot.com/" target="_blank" rel="noopener noreferrer">Test Automation Practice</a></li>
+            <li><a href="https://sauce-demo.myshopify.com/" target="_blank" rel="noopener noreferrer">myshopify</a></li>
+            <li><a href="https://www.saucedemo.com/" target="_blank" rel="noopener noreferrer">sauce-demo</a></li>
+        </ul>
+    </div>
+
 </body>
 </html>
