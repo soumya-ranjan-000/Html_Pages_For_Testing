@@ -82,6 +82,11 @@
         <p>Challenge Mode: Minimal IDs, Random Number Breaking</p>
         <span class="status-badge status-active" data-status="ready" aria-label="System Status">System Ready</span>
 
+        <!-- Header Register Button (duplicate structure, different id/class) -->
+        <button type="submit" id="header-register-btn" name="headerSubmitBtn" class="submit-btn header-action" data-testid="header-submit-btn">
+            Register Now
+        </button>
+
         <hr />
         <h2>Control Panel</h2>
         <button id="toggle-locators-btn" onclick="toggleLocators()" style="background-color: #dc3545;">
@@ -217,6 +222,13 @@
         <!-- Shadow DOM -->
         <h3>Shadow DOM Component</h3>
         <div id="shadow-host"></div>
+
+        <!-- Footer Register Button (duplicate structure, different id/class) -->
+        <footer>
+            <button type="submit" id="footer-register-btn" name="footerSubmitBtn" class="submit-btn footer-action" data-testid="footer-submit-btn">
+                Register Now
+            </button>
+        </footer>
 
         <script>
             // Shadow DOM Setup
